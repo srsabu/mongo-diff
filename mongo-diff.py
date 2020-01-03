@@ -115,17 +115,19 @@ def compare_entries(db1_entry, db2_entry):
 
 
 def main():
-    if (len(sys.argv) != 4):
-        print("./mongo-diff.py <host> <db1> <db2>")
+    if (len(sys.argv) != 5):
+        print("./mongo-diff.py <host> <db1> <host2> <db2>")
         return 1
-    HOST = sys.argv[1]
+    HOST1 = sys.argv[1]
     DB1  = sys.argv[2]
-    DB2  = sys.argv[3]
+    HOST2 = sys.argv[3]
+    DB2  = sys.argv[4]
 
-    mgo = MongoClient(HOST)
+    mgo1 = MongoClient(HOST1)
+    mgo2 = MongoClient(HOST2)
 
-    db1 = mgo[DB1]
-    db2 = mgo[DB2]
+    db1 = mgo1[DB1]
+    db2 = mgo2[DB2]
 
     print("Comparing databases: {0} and {1}".format(DB1, DB2))
     db1_coll_names = db1.collection_names()
@@ -196,12 +198,12 @@ def main():
                     last_percent_update = search_percent
 
             print("\t{0:.0f}% finished comparing {1}.{2} to {3}.{4}".format(100, DB1, coll, DB2, coll))
-            print(
-                "\tMatched {0} records out of {1} ({2:.2f}%) from {3}.{4} to records in {5}.{6}".format(
-                    match_count, collection_counts[0], 100 * match_count / collection_counts[0],
-                    DB1, coll, DB2, coll
+            print("\tMatched {0} records out of {1} ({2:.2f}%) from {3}.{4} to records in {5}.{6}".format(
+                match_count, collection_counts[0], 100 * match_count / collection_counts[0],
+                DB1, coll, DB2, coll
                 )
             )
+        
         for err in errors:
             print(err, file=sys.stderr)
 
